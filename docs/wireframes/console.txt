@@ -1,0 +1,16 @@
+Consola integrada
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Consola                                                                  │
+├──────────────────────────────────────────────────────────────────────────┤
+│ 🔍 Buscar…   ▾ Filtros: [INFO ✓] [WARN ✓] [ERROR ✓] [DEBUG]    [↓ Export]│
+├──────────────────────────────────────────────────────────────────────────┤
+│ [12:00:00] [Server thread/INFO] Starting minecraft server                │
+│ [12:00:01] [Worker-1/INFO] Loaded 13 advancements                        │
+│ [12:00:04] [Server thread/WARN] You should never run a Spigot fork…      │
+│ [12:00:08] [Server thread/INFO] Done (4.123s)! For help, type "help"     │
+│ [12:01:11] [Server thread/INFO] Pedro joined the game                    │
+│                                                                          │
+├──────────────────────────────────────────────────────────────────────────┤
+│ > say hola amigos                                          [Enviar]      │
+└──────────────────────────────────────────────────────────────────────────┘

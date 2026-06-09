@@ -1,0 +1,22 @@
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ░░ Sidebar 256 ░░ │ ░░ Topbar (drag region) ░░░░░░░░░░░░░░░ [☀/🌙] [⚙] │
+│ • MC Server Studio│─────────────────────────────────────────────────────────│
+│                   │                                                         │
+│   ▸ Dashboard     │   ┌─ Page header ───────────────────────────────────┐   │
+│   ▸ Crear servidor│   │ Dashboard                       [+ Nuevo servidor]│  │
+│                   │   │ Estado en tiempo real de tus servidores …        │  │
+│   ─ SERVIDORES ─  │   └─────────────────────────────────────────────────┘   │
+│   ● smp-amigos    │                                                         │
+│   ○ test-creative │   ┌─ Stat ─┐ ┌─ Stat ─┐ ┌─ Stat ─┐ ┌─ Stat ─┐          │
+│   ◐ modpack       │   │Servidores│ CPU host│ RAM host│Jugadores│            │
+│                   │   │   3      │  M2 Max │ 32.0 GB │   0     │            │
+│   ─ SERVIDOR      │   └─────────┘ └─────────┘ └─────────┘ └─────────┘       │
+│     ACTIVO ─      │                                                         │
+│   ▸ Consola       │   ┌─ Mis servidores ────────────────┐ ┌─ Eventos ────┐  │
+│   ▸ Plugins       │   │ ● smp-amigos  Paper 1.21.1 …   │ │ join Pedro   │  │
+│   ▸ Mods          │   │ ○ test-creative Vanilla 1.20…  │ │ stop test    │  │
+│   ▸ Monitor       │   │ ◐ modpack Fabric 1.20.4 …      │ │ backup ok    │  │
+│   ▸ Backups       │   └─────────────────────────────────┘ └──────────────┘  │
+│                   │                                                         │
+│   ─ ⚙ Ajustes ─   │                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘

@@ -1,0 +1,34 @@
+Wizard de creación (5 pasos)
+
+Paso 1: Loader + versión
+┌──────────────────────────────────────────────┐
+│ Crear servidor                               │
+│ Paso 1 de 5 · Loader y versión   ░░░░░ 20%   │
+├──────────────────────────────────────────────┤
+│ Elige el loader                              │
+│ [ Vanilla ] [ Paper ✓] [ Purpur ] [ Spigot ] │
+│ [ Bukkit  ] [ Forge ] [ NeoForge] [ Fabric ] │
+│ [ Quilt   ] [ Mohist] [Arclight ] [ Magma ]  │
+│ [ Sponge  ]                                  │
+│                                              │
+│  Versión MC ▼ 1.21.1                         │
+│  Build      ▼ Última estable                 │
+│                              [← Atrás] [→]   │
+└──────────────────────────────────────────────┘
+
+Paso 2: Auth                Paso 3: Identidad
+┌────────────┬────────────┐  ┌──────────────────────────┐
+│ Premium ✓  │ No premium │  │ Nombre  Puerto   RAM min │
+│ online=    │ online=    │  │  ─────  ─────    ─────   │
+│ true       │ false      │  │ RAM max Mundo    MOTD    │
+│ • Cuentas  │ • LAN/test │  │  ─────  ─────    ─────   │
+│   verif.   │ • Riesgo   │  │ Max players              │
+└────────────┴────────────┘  └──────────────────────────┘
+
+Paso 4: Contenido           Paso 5: Confirmar
+┌──────────────────────────┐ ┌──────────────────────────┐
+│ ○ Sin mods ni plugins    │ │ Resumen…                 │
+│ ● Solo plugins           │ │ [✓] Acepto EULA Mojang   │
+│ ○ Solo mods              │ │ Progreso ▓▓▓▓░ 60%       │
+│ ○ Mods + plugins         │ │ Descargando server.jar…  │
+└──────────────────────────┘ └──────────────────────────┘

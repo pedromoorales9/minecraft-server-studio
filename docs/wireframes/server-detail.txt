@@ -1,0 +1,19 @@
+Detalle de servidor
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ smp-amigos                                                               │
+│ Paper · Minecraft 1.21.1 · Puerto 25565                                  │
+│                                       [↻ Reiniciar] [⏹ Detener]          │
+├──────────────────────────────────────────────────────────────────────────┤
+│ [ Estado running ] [ CPU 14% ] [ RAM 2.1 / 4 GB ] [ Jugadores 3/20 ]     │
+├──────────────────────────────────────────────────────────────────────────┤
+│ Detalles                                       │ Atajos                  │
+│ Directorio   /Users/…/servers/srv_a1b2         │ [▶ Consola]             │
+│ World        world                             │ [📦 Backups]            │
+│ Auth         premium                           │ [📁 Carpeta]            │
+│ Java         /…/jre-21/bin/java                │ [🗑 Eliminar servidor]  │
+│ RCON         puerto 25575                      │                         │
+│ MOTD         A Minecraft Server                │                         │
+│ Difficulty   normal                            │                         │
+│ Gamemode     survival                          │                         │
+└──────────────────────────────────────────────────────────────────────────┘
