@@ -1,0 +1,39 @@
+name: Release
+
+# Builds the Windows installer and attaches it to a GitHub Release
+# whenever a version tag (v1.0.0, v0.2.1, ...) is pushed.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Package Windows installer
+        run: npx electron-builder --win --publish never
+
+      - name: Upload installer to Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            release/*.exe
+            release/*.blockmap

@@ -9,6 +9,7 @@ import { useLiveMetrics } from '../monitoring/useLiveMetrics';
 import { LOADER_LABEL } from '../../../shared/types/loader';
 import type { ServerRecord } from '../../../shared/types/server';
 import { useRecentEvents } from './useRecentEvents';
+import { OWNER_NAME } from '../../lib/branding';
 
 export function DashboardPage() {
   const servers = useQuery({
@@ -21,7 +22,7 @@ export function DashboardPage() {
   return (
     <>
       <PageHeader
-        title="Dashboard"
+        title={<>Hola, <span className="bg-gradient-to-r from-[hsl(263_90%_72%)] to-[hsl(258_85%_58%)] bg-clip-text text-transparent">{OWNER_NAME}</span></>}
         description="Estado en tiempo real de tus servidores y eventos recientes."
         actions={
           <Button asChild>

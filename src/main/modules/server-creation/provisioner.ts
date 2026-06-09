@@ -7,7 +7,7 @@ import { serversRepo } from '../../database/repositories/serversRepo.js';
 import { eventsRepo } from '../../database/repositories/eventsRepo.js';
 import { downloadFile } from '../../services/downloads/downloader.js';
 import { javaManager } from '../../services/java/javaManager.js';
-import { recommendedJavaMajor } from '../../services/mojang/manifest.js';
+import { requiredJavaMajor } from '../../services/mojang/manifest.js';
 import { writeEulaAccepted } from '../../services/eula.js';
 import { writeServerProperties } from '../../services/properties.js';
 import { broadcast } from '../../ipc/broadcast.js';
@@ -34,6 +34,7 @@ export async function provisionServer(req: CreateServerRequest): Promise<ServerR
   await fsp.mkdir(dir, { recursive: true });
 
   const now = new Date().toISOString();
+  const javaMajor = await requiredJavaMajor(req.minecraftVersion);
   const record: ServerRecord = {
     id,
     name: req.name,
@@ -48,7 +49,7 @@ export async function provisionServer(req: CreateServerRequest): Promise<ServerR
     worldName: req.worldName,
     directory: dir,
     javaPath: null,
-    javaMajor: recommendedJavaMajor(req.minecraftVersion),
+    javaMajor,
     status: 'updating',
     rconPort: req.port + 10,
     rconPassword: nanoid(24),

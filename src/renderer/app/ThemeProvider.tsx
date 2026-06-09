@@ -13,7 +13,7 @@ const STORAGE_KEY = 'studio.theme';
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return (stored as Theme) ?? 'system';
+    return (stored as Theme) ?? 'dark';
   });
 
   const resolved =

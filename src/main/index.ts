@@ -24,7 +24,8 @@ function createMainWindow(): BrowserWindow {
     minWidth: 1000,
     minHeight: 640,
     show: false,
-    backgroundColor: '#0b0b0d',
+    backgroundColor: '#0a0812',
+    icon: path.resolve(__dirname, '../../resources/icon.png'),
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
     autoHideMenuBar: true,
     webPreferences: {

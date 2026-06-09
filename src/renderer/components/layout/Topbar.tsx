@@ -1,13 +1,18 @@
 import { useTheme } from '../../app/ThemeProvider';
 import { Button } from '../ui/button';
 import { Moon, Sun, Monitor } from 'lucide-react';
+import { APP_NAME, OWNER_NAME } from '../../lib/branding';
 
 export function Topbar() {
   const { theme, setTheme } = useTheme();
   return (
     <header className="drag flex h-12 items-center justify-between border-b border-border/60 px-4 glass">
-      <div className="pl-16 text-sm font-medium text-muted-foreground">Minecraft Server Studio</div>
-      <div className="no-drag flex items-center gap-1">
+      <div className="pl-16 text-sm font-medium text-muted-foreground">{APP_NAME}</div>
+      <div className="no-drag flex items-center gap-2">
+        <span className="hidden select-none items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary sm:flex">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary))]" />
+          {OWNER_NAME}
+        </span>
         <ThemeToggle theme={theme} setTheme={setTheme} />
       </div>
     </header>

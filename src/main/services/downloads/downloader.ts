@@ -23,7 +23,7 @@ export interface DownloadResult {
 }
 
 /**
- * Streams a URL to disk. Computes SHA1 and SHA256 on the fly so verification
+ * Streams a URL to disk. Computes SHA1, SHA256 and SHA512 on the fly so verification
  * doesn't require a second pass over the file.
  *
  * Why: trust-but-verify for upstream jars (Mojang, Paper, Modrinth, etc.).
@@ -35,6 +35,7 @@ export async function downloadFile(opts: DownloadOptions): Promise<DownloadResul
   const tmp = `${opts.destination}.part-${crypto.randomBytes(4).toString('hex')}`;
   const sha1 = crypto.createHash('sha1');
   const sha256 = crypto.createHash('sha256');
+  const sha512 = crypto.createHash('sha512');
   let size = 0;
 
   const stream = got.stream(opts.url, {
@@ -59,6 +60,7 @@ export async function downloadFile(opts: DownloadOptions): Promise<DownloadResul
   stream.on('data', (chunk: Buffer) => {
     sha1.update(chunk);
     sha256.update(chunk);
+    sha512.update(chunk);
   });
 
   try {
@@ -70,9 +72,15 @@ export async function downloadFile(opts: DownloadOptions): Promise<DownloadResul
 
   const sha1Hex = sha1.digest('hex');
   const sha256Hex = sha256.digest('hex');
+  const sha512Hex = sha512.digest('hex');
 
   if (opts.expectedHash) {
-    const got = opts.expectedHash.algo === 'sha1' ? sha1Hex : sha256Hex;
+    const got =
+      opts.expectedHash.algo === 'sha1'
+        ? sha1Hex
+        : opts.expectedHash.algo === 'sha512'
+          ? sha512Hex
+          : sha256Hex;
     if (got.toLowerCase() !== opts.expectedHash.value.toLowerCase()) {
       await fsp.rm(tmp, { force: true });
       throw new Error(

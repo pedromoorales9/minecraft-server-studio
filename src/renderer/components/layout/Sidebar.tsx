@@ -5,7 +5,6 @@ import {
   LayoutDashboard,
   Plus,
   Settings,
-  Server,
   Activity,
   Box,
   Puzzle,
@@ -13,6 +12,8 @@ import {
   Terminal,
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { Logo } from '../brand/Logo';
+import { OWNER_NAME } from '../../lib/branding';
 
 interface NavItem {
   to: string;
@@ -40,14 +41,17 @@ export function Sidebar() {
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-border/60 bg-card/40">
       <div className="drag h-12" />
-      <div className="px-4 pb-2">
-        <div className="flex items-center gap-2 px-2">
-          <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground">
-            <Server className="h-4 w-4" />
-          </div>
+      <div className="px-4 pb-3">
+        <div className="flex items-center gap-2.5 px-2">
+          <Logo size={34} glow />
           <div>
-            <div className="text-sm font-semibold leading-tight">MC Server</div>
-            <div className="text-xs text-muted-foreground">Studio</div>
+            <div className="text-sm font-semibold leading-tight tracking-tight">
+              <span className="bg-gradient-to-r from-[hsl(263_90%_72%)] to-[hsl(258_85%_58%)] bg-clip-text text-transparent">
+                {OWNER_NAME}
+              </span>{' '}
+              Studio
+            </div>
+            <div className="text-[11px] text-muted-foreground">Minecraft Server Manager</div>
           </div>
         </div>
       </div>

@@ -49,15 +49,38 @@ export async function getMojangVersionMeta(version: string): Promise<MojangVersi
   return res.body;
 }
 
-/** Suggested Java major version for a given Minecraft release. */
+/**
+ * Suggested Java major version for a given Minecraft release.
+ *
+ * Heuristic fallback only — prefer `requiredJavaMajor`, which asks Mojang.
+ * Handles both the legacy `1.x` scheme and the year-based scheme
+ * introduced in 2026 (`26.1`, `26.1.2`, …).
+ */
 export function recommendedJavaMajor(mcVersion: string): number {
   const [, major, minor = '0'] = /^(\d+)\.(\d+)/.exec(mcVersion) ?? [];
   const M = Number(major ?? 1);
   const m = Number(minor);
+  if (M >= 2) return 25; // year-based versions (26.x+) all require modern Java
   if (M < 1) return 8;
   if (m <= 16) return 8;
   if (m === 17) return 16;
   if (m === 18 || m === 19) return 17;
   if (m === 20 && /^1\.20(\.[0-4])?$/.test(mcVersion)) return 17;
   return 21;
+}
+
+/**
+ * Authoritative Java major for a Minecraft version, straight from Mojang's
+ * version metadata (`javaVersion.majorVersion`). Falls back to the local
+ * heuristic when the version is unknown to Mojang (e.g. custom builds) or
+ * the network is unavailable.
+ */
+export async function requiredJavaMajor(mcVersion: string): Promise<number> {
+  try {
+    const meta = await getMojangVersionMeta(mcVersion);
+    if (meta.javaVersion?.majorVersion) return meta.javaVersion.majorVersion;
+  } catch {
+    // ignore — fall through to heuristic
+  }
+  return recommendedJavaMajor(mcVersion);
 }

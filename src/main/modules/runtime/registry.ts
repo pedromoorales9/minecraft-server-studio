@@ -10,7 +10,7 @@ import { serversRepo } from '../../database/repositories/serversRepo.js';
 import { eventsRepo } from '../../database/repositories/eventsRepo.js';
 import { getDb } from '../../database/db.js';
 import { javaManager } from '../../services/java/javaManager.js';
-import { recommendedJavaMajor } from '../../services/mojang/manifest.js';
+import { requiredJavaMajor } from '../../services/mojang/manifest.js';
 import type { ServerMetricsSnapshot, ServerRecord, ServerStatus } from '../../../shared/types/server.js';
 
 /**
@@ -45,11 +45,29 @@ class RuntimeRegistry {
   }
 
   /**
-   * Validates the stored Java path before launch. The JRE cache can be wiped
-   * (or the record can point at a runtime from another machine), so if the
-   * binary is gone we re-acquire a matching JRE and persist the new path.
+   * Validates the stored Java runtime before launch.
+   *
+   * Two failure modes are healed here:
+   *   • The JRE cache was wiped (or the record points at a runtime from
+   *     another machine) — the binary is gone, so we re-acquire one.
+   *   • The stored `javaMajor` is wrong for this Minecraft version (older
+   *     records computed it with a heuristic that mis-handled the year-based
+   *     version scheme, e.g. 26.1.2 → Java 8). We re-check against Mojang's
+   *     metadata and upgrade the record if it disagrees.
    */
   private async resolveJava(rec: ServerRecord): Promise<ServerRecord> {
+    const required = await requiredJavaMajor(rec.minecraftVersion);
+    if (rec.javaMajor !== required) {
+      log.warn('Stored Java major mismatches required; correcting', {
+        id: rec.id,
+        stored: rec.javaMajor,
+        required,
+      });
+      const jre = await javaManager.ensure(required);
+      serversRepo.patch(rec.id, { javaMajor: required, javaPath: jre.path });
+      return { ...rec, javaMajor: required, javaPath: jre.path };
+    }
+
     const stale =
       !rec.javaPath || (path.isAbsolute(rec.javaPath) && !fs.existsSync(rec.javaPath));
     if (!stale) return rec;
@@ -57,8 +75,7 @@ class RuntimeRegistry {
       id: rec.id,
       javaPath: rec.javaPath,
     });
-    const major = rec.javaMajor ?? recommendedJavaMajor(rec.minecraftVersion);
-    const jre = await javaManager.ensure(major);
+    const jre = await javaManager.ensure(required);
     serversRepo.patch(rec.id, { javaPath: jre.path });
     return { ...rec, javaPath: jre.path };
   }

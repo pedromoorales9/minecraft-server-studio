@@ -10,10 +10,12 @@ import { MonitoringPage } from '../modules/monitoring/MonitoringPage';
 import { BackupsPage } from '../modules/backups/BackupsPage';
 import { SettingsPage } from '../modules/settings/SettingsPage';
 import { ErrorBoundary } from './ErrorBoundary';
+import { Splash } from '../components/brand/Splash';
 
 export function App() {
   return (
     <AppShell>
+      <Splash />
       <ErrorBoundary>
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

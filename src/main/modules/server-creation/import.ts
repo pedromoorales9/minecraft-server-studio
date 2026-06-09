@@ -2,7 +2,7 @@ import path from 'node:path';
 import { promises as fsp } from 'node:fs';
 import { nanoid } from 'nanoid';
 import { serversRepo } from '../../database/repositories/serversRepo.js';
-import { recommendedJavaMajor } from '../../services/mojang/manifest.js';
+import { requiredJavaMajor } from '../../services/mojang/manifest.js';
 import { javaManager } from '../../services/java/javaManager.js';
 import type { ServerRecord } from '../../../shared/types/server.js';
 import type { Loader } from '../../../shared/types/loader.js';
@@ -24,7 +24,7 @@ export async function importExistingServer(dir: string): Promise<ServerRecord> {
   const mcVersion = inferMcVersion(jar) ?? '1.21.1';
   const props = await parseProperties(path.join(dir, 'server.properties'));
   const eulaAccepted = await isEulaAccepted(path.join(dir, 'eula.txt'));
-  const major = recommendedJavaMajor(mcVersion);
+  const major = await requiredJavaMajor(mcVersion);
   const java = await javaManager.ensure(major).catch(() => null);
 
   const now = new Date().toISOString();
