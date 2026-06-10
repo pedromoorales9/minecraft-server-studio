@@ -14,6 +14,7 @@ import { StepConfirm } from './steps/StepConfirm';
 import type { WizardState } from './wizardState';
 import { useMutation } from '@tanstack/react-query';
 import type { ServerProvisioningProgress } from '../../../shared/types/server';
+import { cn } from '../../lib/cn';
 
 const INITIAL: WizardState = {
   loader: 'paper',
@@ -87,17 +88,68 @@ export function WizardPage() {
   const overall = ((step + 1) / STEPS.length) * 100;
 
   return (
-    <>
+    <div className="mx-auto max-w-[960px]">
       <PageHeader title="Crear servidor" description="Asistente paso a paso. Tardarás menos de un minuto." />
 
-      <Card>
+      {/* ===== Stepper numerado ===== */}
+      <div className="mb-6 flex items-start">
+        {STEPS.map((st, i) => {
+          const stepState = i < step ? 'done' : i === step ? 'active' : 'todo';
+          return (
+            <button
+              key={st.key}
+              onClick={() => i < step && !create.isPending && setStep(i)}
+              className={cn(
+                'relative flex flex-1 flex-col items-center gap-2',
+                i < step ? 'cursor-pointer' : 'cursor-default',
+              )}
+            >
+              {i > 0 ? (
+                <span
+                  className={cn(
+                    'absolute left-[-50%] top-4 z-0 h-0.5 w-full',
+                    i <= step
+                      ? 'bg-gradient-to-r from-[hsl(263_90%_66%)] to-[hsl(258_80%_52%)]'
+                      : 'bg-accent',
+                  )}
+                />
+              ) : null}
+              <span
+                className={cn(
+                  'relative z-10 grid h-[34px] w-[34px] place-items-center rounded-full font-display text-sm font-bold transition-all duration-200',
+                  stepState === 'active' &&
+                    'bg-gradient-to-br from-[hsl(263_90%_66%)] to-[hsl(258_80%_45%)] text-white shadow-[0_0_18px_hsl(261_83%_58%/0.45)]',
+                  stepState === 'done' && 'border border-primary/40 bg-primary/15 text-primary',
+                  stepState === 'todo' && 'border-[1.5px] border-border bg-secondary text-muted-foreground/60',
+                )}
+              >
+                {stepState === 'done' ? <Check className="h-4 w-4" /> : i + 1}
+              </span>
+              <span
+                className={cn(
+                  'text-xs font-semibold transition-colors',
+                  stepState === 'active'
+                    ? 'text-foreground'
+                    : stepState === 'done'
+                      ? 'text-muted-foreground'
+                      : 'text-muted-foreground/50',
+                )}
+              >
+                {st.title}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <Card className="rounded-2xl shadow-lg">
         <CardContent className="p-0">
           <div className="border-b border-border/60 px-6 py-4">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
                 Paso {step + 1} de {STEPS.length} · {STEPS[step]!.title}
               </span>
-              <span>{Math.round(overall)}%</span>
+              <span className="font-mono">{Math.round(overall)}%</span>
             </div>
             <Progress value={overall} className="mt-2" />
           </div>
@@ -145,6 +197,6 @@ export function WizardPage() {
           </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

@@ -154,11 +154,11 @@ function ServerSubNav({ serverId }: { serverId: string }) {
 function StatusDot({ status }: { status: string }) {
   const colour =
     status === 'running'
-      ? 'bg-[hsl(var(--success))]'
+      ? 'bg-[hsl(var(--success))] shadow-[0_0_8px_hsl(var(--success))]'
       : status === 'starting' || status === 'stopping' || status === 'updating'
-        ? 'bg-[hsl(var(--warning))] animate-pulse'
+        ? 'bg-[hsl(var(--warning))] shadow-[0_0_8px_hsl(var(--warning))] animate-pulse'
         : status === 'crashed'
-          ? 'bg-destructive'
+          ? 'bg-destructive shadow-[0_0_8px_hsl(var(--destructive))]'
           : 'bg-muted-foreground/50';
-  return <span className={cn('h-2 w-2 rounded-full', colour)} />;
+  return <span className={cn('h-[7px] w-[7px] rounded-full', colour)} />;
 }
