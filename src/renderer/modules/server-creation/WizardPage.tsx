@@ -12,7 +12,7 @@ import { StepIdentity } from './steps/StepIdentity';
 import { StepContent } from './steps/StepContent';
 import { StepConfirm } from './steps/StepConfirm';
 import type { WizardState } from './wizardState';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { ServerProvisioningProgress } from '../../../shared/types/server';
 import { cn } from '../../lib/cn';
 
@@ -78,8 +78,19 @@ export function WizardPage() {
     if (step > 0) setStep(step - 1);
   }
 
+  // Misma queryKey que StepLoader → compartida por caché de react-query.
+  // Si el loader elegido no publica builds para esa versión de MC, no se avanza.
+  const loaderVersions = useQuery({
+    queryKey: ['loader-versions', state.loader, state.minecraftVersion],
+    queryFn: () => window.api.versions.listLoader(state.loader, state.minecraftVersion),
+    enabled: Boolean(state.loader !== 'vanilla' && state.minecraftVersion),
+  });
+  const comboOk =
+    state.loader === 'vanilla' ||
+    (!loaderVersions.isError && (loaderVersions.data?.length ?? 0) > 0);
+
   function canAdvance(): boolean {
-    if (step === 0) return Boolean(state.loader && state.minecraftVersion);
+    if (step === 0) return Boolean(state.loader && state.minecraftVersion) && comboOk;
     if (step === 2) return state.name.trim().length > 0 && state.port > 0;
     if (step === 4) return state.eulaAccepted;
     return true;

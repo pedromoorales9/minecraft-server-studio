@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Check } from 'lucide-react';
+import { Check, AlertTriangle } from 'lucide-react';
 import {
   LOADERS,
   LOADER_LABEL,
@@ -45,6 +45,14 @@ export function StepLoader({ value, onChange }: StepProps) {
   });
 
   const releaseOnly = versions.data?.filter((v) => v.type === 'release') ?? [];
+
+  // La combinación loader+versión no existe (p. ej. NeoForge para 1.20.1):
+  // el upstream no publica builds, así que avisamos antes de dejar continuar.
+  const comboUnavailable =
+    value.loader !== 'vanilla' &&
+    Boolean(value.minecraftVersion) &&
+    !loaderVersions.isLoading &&
+    (loaderVersions.isError || (loaderVersions.data?.length ?? 0) === 0);
 
   return (
     <div className="space-y-6">
@@ -138,6 +146,21 @@ export function StepLoader({ value, onChange }: StepProps) {
           </div>
         ) : null}
       </div>
+
+      {comboUnavailable ? (
+        <div className="flex items-start gap-3 rounded-xl border border-[hsl(var(--warning))]/35 bg-[hsl(var(--warning))]/10 p-3.5">
+          <AlertTriangle className="mt-0.5 h-4 w-4 flex-none text-[hsl(var(--warning))]" />
+          <div className="text-[13px] leading-relaxed">
+            <span className="font-semibold text-[hsl(var(--warning))]">
+              {LOADER_LABEL[value.loader]} no está disponible para Minecraft {value.minecraftVersion}.
+            </span>{' '}
+            <span className="text-muted-foreground">
+              Elige otra versión de Minecraft u otro loader compatible
+              {value.loader === 'neoforge' ? ' (NeoForge existe desde 1.20.2; para 1.20.1 usa Forge)' : ''}.
+            </span>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
