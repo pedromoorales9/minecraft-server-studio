@@ -55,11 +55,32 @@ export class ServerProcess extends EventEmitter {
     this.setStatus('starting');
     log.info('Starting server', { id: this.record.id, jvmArgs, launch: meta.launchJar });
 
-    this.child = isScript
-      ? spawn(meta.launchJar, ['nogui'], { cwd: this.record.directory, shell: process.platform === 'win32' })
-      : spawn(this.record.javaPath, [...jvmArgs, '-jar', meta.launchJar, 'nogui'], {
-          cwd: this.record.directory,
-        });
+    if (isScript) {
+      // Los run.bat/run.sh de Forge/NeoForge invocan `java` del PATH, que en
+      // la mayoría de equipos no existe (usamos nuestro JRE descargado). Se lo
+      // inyectamos vía PATH/JAVA_HOME, y volcamos los flags de JVM (RAM,
+      // Aikar) en user_jvm_args.txt, que es donde el script los lee.
+      const javaBinDir = path.dirname(this.record.javaPath);
+      const env = {
+        ...process.env,
+        JAVA_HOME: path.dirname(javaBinDir),
+        PATH: `${javaBinDir}${path.delimiter}${process.env.PATH ?? ''}`,
+      };
+      await fsp.writeFile(
+        path.join(this.record.directory, 'user_jvm_args.txt'),
+        `# Generado por Minecraft Server Studio — se sobrescribe en cada arranque\n${jvmArgs.join('\n')}\n`,
+        'utf8',
+      );
+      this.child = spawn(meta.launchJar, ['nogui'], {
+        cwd: this.record.directory,
+        shell: process.platform === 'win32',
+        env,
+      });
+    } else {
+      this.child = spawn(this.record.javaPath, [...jvmArgs, '-jar', meta.launchJar, 'nogui'], {
+        cwd: this.record.directory,
+      });
+    }
 
     this.attachStreams(this.child);
 
