@@ -71,7 +71,15 @@ export class ServerProcess extends EventEmitter {
         `# Generado por Minecraft Server Studio — se sobrescribe en cada arranque\n${jvmArgs.join('\n')}\n`,
         'utf8',
       );
-      this.child = spawn(meta.launchJar, ['nogui'], {
+      // Con shell:true el comando se concatena sin comillas: una ruta con
+      // espacios ("…\Minecraft Server Studio\…\run.bat") rompe cmd.exe. Como
+      // cwd ya es el directorio del servidor, lanzamos el script por su
+      // nombre relativo y, si no, lo envolvemos en comillas.
+      const script =
+        path.dirname(meta.launchJar) === this.record.directory
+          ? path.basename(meta.launchJar)
+          : `"${meta.launchJar}"`;
+      this.child = spawn(script, ['nogui'], {
         cwd: this.record.directory,
         shell: process.platform === 'win32',
         env,
