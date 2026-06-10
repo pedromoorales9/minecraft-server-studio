@@ -1,7 +1,7 @@
 {
   "name": "minecraft-server-studio",
   "productName": "Minecraft Server Studio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Professional desktop app to create, configure, install, manage and monitor Minecraft servers.",
   "author": {
     "name": "Minecraft Server Studio Team"
