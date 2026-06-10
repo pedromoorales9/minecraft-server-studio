@@ -24,6 +24,14 @@ export interface JavaRuntime {
  *   2. Probe the user's `PATH` and well-known install locations.
  *   3. Download from Adoptium (Eclipse Temurin) for the host OS/arch.
  */
+/**
+ * Concurrent `ensure(major)` calls share one in-flight install. Without this,
+ * two simultaneous server operations (e.g. crear + arrancar) download the same
+ * JRE archive in parallel and race each other on extract/cleanup, which on
+ * Windows surfaces as ENOENT renaming the `.part` file.
+ */
+const inflight = new Map<number, Promise<JavaRuntime>>();
+
 export const javaManager = {
   async listInstalled(): Promise<JavaRuntime[]> {
     const rows = getDb()
@@ -47,17 +55,29 @@ export const javaManager = {
   },
 
   async ensure(major: number): Promise<JavaRuntime> {
-    const existing = await this.listInstalled();
-    const hit = existing.find((j) => j.major === major);
-    if (hit) return hit;
+    const pending = inflight.get(major);
+    if (pending) return pending;
 
-    const probed = await probeSystemJava(major);
-    if (probed) {
-      register(probed);
-      return probed;
+    const job = (async () => {
+      const existing = await this.listInstalled();
+      const hit = existing.find((j) => j.major === major);
+      if (hit) return hit;
+
+      const probed = await probeSystemJava(major);
+      if (probed) {
+        register(probed);
+        return probed;
+      }
+
+      return await this.installJre(major);
+    })();
+
+    inflight.set(major, job);
+    try {
+      return await job;
+    } finally {
+      inflight.delete(major);
     }
-
-    return await this.installJre(major);
   },
 
   async installAdoptium(major: number): Promise<JavaRuntime> {

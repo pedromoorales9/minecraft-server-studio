@@ -89,9 +89,43 @@ export async function downloadFile(opts: DownloadOptions): Promise<DownloadResul
     }
   }
 
-  await fsp.rename(tmp, opts.destination);
+  await renameResilient(tmp, opts.destination);
   log.debug('Downloaded', { url: opts.url, size, sha1: sha1Hex });
   return { destination: opts.destination, sizeBytes: size, sha1: sha1Hex, sha256: sha256Hex };
+}
+
+/**
+ * `rename` with retries.
+ *
+ * On Windows the freshly-written file can be briefly locked by antivirus
+ * scanners (EPERM/EBUSY) or even moved away (ENOENT). We retry a few times
+ * with backoff; if the source vanished but the destination already exists
+ * (a concurrent download completed first), we accept the existing file.
+ */
+async function renameResilient(from: string, to: string): Promise<void> {
+  let lastErr: unknown = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      await fsp.rename(from, to);
+      return;
+    } catch (err) {
+      lastErr = err;
+      const code = (err as NodeJS.ErrnoException).code;
+      if (code === 'ENOENT') {
+        try {
+          await fsp.access(to);
+          log.warn('Temp file vanished but destination exists; using it', { to });
+          return;
+        } catch {
+          // destination missing too — retry below in case AV releases the file
+        }
+      } else if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'EACCES') {
+        throw err;
+      }
+      await new Promise((r) => setTimeout(r, 250 * (attempt + 1)));
+    }
+  }
+  throw lastErr;
 }
 
 export async function fileSha256(filePath: string): Promise<string> {
